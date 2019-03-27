@@ -18,9 +18,9 @@
 #include "fsm.h"
 #include "tmr.h"
 
-//#define CLK_MS_TECLADO 		5
-//#define	DEBOUNCE_TIME_TECLADO	200
-#define COL_REFRESH_TIME 25
+//Lo hemos cambiado para que el tiempo de refresco sea inferior y las filas del teclado no
+//se confundan unas con otras ya que a 20 se rayaba
+#define COL_REFRESH_TIME 15
 
 #define	FLAG_KEY			3
 
