@@ -1,8 +1,8 @@
 #include "piTankGo_1.h"
 #include <softPwm.h>
 #include "player.h"
-#include "tecladoTL04.h"
 #include "torreta.h"
+#include "joystick.h"
 
 int frecuenciaDespacito[160] = {0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,0,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318,659,659,659,659,659,659,659,659,554,587,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318};
 int tiempoDespacito[160] = {1200,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,800,300,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,450,1800,150,150,150,150,300,150,300,150,150,150,300,150,300,450,450,300,150,150,225,75,150,150,300,450,800,150,150,300,150,150,300,450,150,150,150,150,150,150,150,150,300,300,150,150,150,150,150,150,450,150,150,150,300,150,300,450,450,300,150,150,150,300,150,300,450,800,150,150,300,150,150,300,450};
@@ -42,6 +42,7 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 	//Escribe en ese pin esa frecuencia softToneWrite(pin_raspi,frecuencia)
 	softToneWrite(PLAYER_PWM_PIN,0);
 
+
 	piUnlock (STD_IO_BUFFER_KEY);
 	return result;
 }
@@ -65,6 +66,7 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	InicializaEfecto(&(p_sistema->player.efecto_impacto),p_sistema->player.efecto_impacto.nombre,frecuenciasImpacto,tiemposImpacto,32);
 	//Inicializamos antes player porque sino efecto disparo no se inicializa y hay violacion de segmento
 	InicializaPlayer(&(p_sistema->player));
+	inicializa();
 
 
 	// Lanzamos thread para exploracion del teclado convencional del PC*/
@@ -152,11 +154,10 @@ int main (){
 
 	TipoSistema sistema;
 	unsigned int next;
-
 	// Configuracion e inicializacion del sistema
 	ConfiguraSistema (&sistema);
 	InicializaSistema (&sistema);
-	initialize(&teclado);
+
 	InicializaTorreta(&sistema.torreta);
 
 	fsm_trans_t reproductor[] = {
@@ -169,7 +170,7 @@ int main (){
 		{-1, NULL, -1, NULL },
 	};
 
-	fsm_trans_t columns[] = {
+	/*fsm_trans_t columns[] = {
 			{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
 			{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
 			{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
@@ -180,7 +181,7 @@ int main (){
 	fsm_trans_t keypad[] = {
 			{ KEY_WAITING, key_pressed, KEY_WAITING, process_key},
 			{-1, NULL, -1, NULL },
-	};
+	};*/
 
 	fsm_trans_t torreta[] = {
 
@@ -199,15 +200,15 @@ int main (){
 
 	//Creacion de las maquinas de estados
 	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player)); //Hemos añadido el timer
-	fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
-	fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
+	//fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
+	//fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
 	fsm_t* torreta_fsm = fsm_new (WAIT_START, torreta, &(sistema.torreta));
 
 	next = millis();
 	while (1) {
 		fsm_fire (player_fsm);
-		fsm_fire (columns_fsm);
-		fsm_fire (keypad_fsm);
+		//fsm_fire (columns_fsm);
+		//fsm_fire (keypad_fsm);
 		fsm_fire (torreta_fsm);
 
 		next += CLK_MS;

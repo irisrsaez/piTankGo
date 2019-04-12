@@ -15,9 +15,10 @@
 
 #include "fsm.h"
 #include "kbhit.h"
+#include "joystick.h"
 
 #define	TORRETA_PIN_PWM_X	18
-#define	TORRETA_PIN_PWM_Y	12
+#define	TORRETA_PIN_PWM_Y	24
 
 // PWM SW: el SO provoca que cuanto más alta sea la frecuencia de la señal PWM de control menos estable resulta esta (i.e. cimbreo del servo)
 // Interesa una frecuencia para la señal de control relativamente baja para minimizar el cimbreo
@@ -49,7 +50,7 @@ typedef struct {
 	//tmr_t* tmr;
 } TipoTorreta;
 
-extern int flags_torreta;
+//extern int flags_torreta;
 extern TipoTorreta torreta;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "tmr.h"
 #include "fsm.h"
+#include "joystick.h"
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
 //------------------------------------------------------

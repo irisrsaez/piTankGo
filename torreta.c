@@ -1,6 +1,7 @@
 #include <softPwm.h>
 #include "torreta.h"
 #include "piTankGoLib.h"
+#include "joystick.h"
 
 int flags_torreta = 0;
 
@@ -154,12 +155,12 @@ void ComienzaSistema (fsm_t* this) {
 }
 
 //Se mueve arriba y abajo en el EJE Y
-void MueveTorretaArriba (fsm_t* this) {
+void MueveTorretaAbajo (fsm_t* this) {
 	TipoTorreta *p_torreta;
 	p_torreta = (TipoTorreta*)(this->user_data);
 
 	piLock(TORRETA_FLAG);
-	flags_torreta &= (~FLAG_JOYSTICK_UP);
+	flags_torreta &= (~FLAG_JOYSTICK_DOWN);
 	piUnlock(TORRETA_FLAG);
 
 	if(p_torreta->posicion.y - p_torreta->servo_y.incremento >= p_torreta->servo_y.minimo) {
@@ -172,12 +173,12 @@ void MueveTorretaArriba (fsm_t* this) {
 	}
 }
 
-void MueveTorretaAbajo (fsm_t* this) {
+void MueveTorretaArriba (fsm_t* this) {
 	TipoTorreta *p_torreta;
 	p_torreta = (TipoTorreta*)(this->user_data);
 
 	piLock(TORRETA_FLAG);
-	flags_torreta &= (~FLAG_JOYSTICK_DOWN);
+	flags_torreta &= (~FLAG_JOYSTICK_UP);
 	piUnlock(TORRETA_FLAG);
 
 	if(p_torreta->posicion.y - p_torreta->servo_y.incremento <= p_torreta->servo_y.maximo) {
@@ -226,6 +227,8 @@ void MueveTorretaDerecha (fsm_t* this) {
 	printf("[TORRETA][POSICION]=[%d]\n", p_torreta->posicion.x);
 	fflush(stdout);
 	}
+
+
 }
 
 

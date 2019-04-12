@@ -24,7 +24,7 @@
 
 // Distribucion de pines GPIO empleada para el teclado
 // ATENCION: Valores a modificar por el alumno
-#define GPIO_COL_1 2
+/*#define GPIO_COL_1 2
 #define GPIO_COL_2 3
 #define GPIO_COL_3 4
 #define GPIO_COL_4 17
@@ -32,14 +32,14 @@
 #define GPIO_ROW_1 27
 #define GPIO_ROW_2 22
 #define GPIO_ROW_3 10
-#define GPIO_ROW_4 9
+#define GPIO_ROW_4 9*/
 
 //Cuando metamos Joystick tenemos que asignarlo
-//#define JOY_PIN_UP	0
-//#define JOY_PIN_DOWN	0
-//#define JOY_PIN_LEFT	0
-//#define JOY_PIN_RIGHT	0
-//#define JOY_PIN_CENTER 0
+#define JOY_PIN_UP	5
+#define JOY_PIN_DOWN	6
+#define JOY_PIN_LEFT	13
+#define JOY_PIN_RIGHT	19
+#define JOY_PIN_CENTER 27
 
 // Distribucion de pines GPIO empleada para el enlace IR
 // ATENCION: Valores a modificar por el alumno
