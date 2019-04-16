@@ -11,24 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wiringPi.h>
-#include <softPwm.h>
 
-#include "fsm.h"
-#include "kbhit.h"
-#include "joystick.h"
-
-#define	TORRETA_PIN_PWM_X	18
-#define	TORRETA_PIN_PWM_Y	24
-
-// PWM SW: el SO provoca que cuanto más alta sea la frecuencia de la señal PWM de control menos estable resulta esta (i.e. cimbreo del servo)
-// Interesa una frecuencia para la señal de control relativamente baja para minimizar el cimbreo
-// El problema es que tampoco puede ser demasiado baja o de lo contrario el control del servo se resiente y su respuesta es peor
-// (más lenta ante variaciones rápidas del ciclo de trabajo de la señal de control)
-#define TORRETA_PWM_RANGE		400 // 100 * 400 = 40,000 µS = 40 ms // 25 Hz
-
-#define TORRETA_INCREMENTO	1
-#define TORRETA_MINIMO		9
-#define TORRETA_MAXIMO		22
+#include "piTankGoLib.h"
 
 typedef struct {
 	int inicio; // Valor correspondiente a la posicion inicial del servo
@@ -46,12 +30,12 @@ typedef struct {
 	TipoPosicionTorreta posicion;
 	TipoServo servo_x;
 	TipoServo servo_y;
+
 	// A completar por el alumno (declaracion del temporizador para control duracion disparo)
-	//tmr_t* tmr;
+	// ...
 } TipoTorreta;
 
-//extern int flags_torreta;
-extern TipoTorreta torreta;
+extern int flags_juego;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
 void InicializaTorreta (TipoTorreta *p_torreta);

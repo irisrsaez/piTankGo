@@ -31,7 +31,7 @@ enum fsm_state {
 	JOYSTICK_LEFT,
 	JOYSTICK_RIGHT,
 	TRIGGER_BUTTON
-}TipoEstado;
+};
 
 typedef struct {
 	TipoTorreta torreta; // Objeto para el control de la torreta

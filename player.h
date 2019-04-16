@@ -14,7 +14,6 @@
 #include <softTone.h>
 
 #include "piTankGoLib.h"
-#include "joystick.h"
 
 #define MAX_NUM_NOTAS 		2000
 #define MAX_NUM_CHAR_NOMBRE	100
