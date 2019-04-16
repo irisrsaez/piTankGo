@@ -5,28 +5,28 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../fsm.c \
+../joystick.c \
 ../kbhit.c \
 ../piTankGo_1.c \
 ../player.c \
-../tecladoTL04.c \
 ../tmr.c \
 ../torreta.c 
 
 OBJS += \
 ./fsm.o \
+./joystick.o \
 ./kbhit.o \
 ./piTankGo_1.o \
 ./player.o \
-./tecladoTL04.o \
 ./tmr.o \
 ./torreta.o 
 
 C_DEPS += \
 ./fsm.d \
+./joystick.d \
 ./kbhit.d \
 ./piTankGo_1.d \
 ./player.d \
-./tecladoTL04.d \
 ./tmr.d \
 ./torreta.d 
 

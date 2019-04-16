@@ -17,36 +17,29 @@
 
 // CLAVES PARA MUTEX
 // ATENCION: Valores a modificar por el alumno
-#define	SYSTEM_FLAGS_KEY	1 //Mutex para SYSTEM
+#define	SYSTEM_FLAGS_KEY	1
 #define	PLAYER_FLAGS_KEY	2 //Mutex para PLAYER
 #define	STD_IO_BUFFER_KEY	4
+#define TORRETA_FLAG		8
 
 // Distribucion de pines GPIO empleada para el teclado
 // ATENCION: Valores a modificar por el alumno
-#define GPIO_COL_1 0
-#define GPIO_COL_2 1
-#define GPIO_COL_3 2
-#define GPIO_COL_4 3
+/*#define GPIO_COL_1 2
+#define GPIO_COL_2 3
+#define GPIO_COL_3 4
+#define GPIO_COL_4 17
 
-#define GPIO_ROW_1 5
-#define GPIO_ROW_2 6
-#define GPIO_ROW_3 12
-#define GPIO_ROW_4 13
-//#define JOY_PIN_UP	0
-//#define JOY_PIN_DOWN	0
-//#define JOY_PIN_LEFT	0
-//#define JOY_PIN_RIGHT	0
-//#define JOY_PIN_CENTER 0
+#define GPIO_ROW_1 27
+#define GPIO_ROW_2 22
+#define GPIO_ROW_3 10
+#define GPIO_ROW_4 9*/
 
-/*#define	TECLADO_ROW_1	66
-#define	TECLADO_ROW_2	68
-#define	TECLADO_ROW_3	70
-#define	TECLADO_ROW_4	72
-
-#define	TECLADO_COL_1	74
-#define	TECLADO_COL_2	76
-#define	TECLADO_COL_3	78
-#define	TECLADO_COL_4	80*/
+//Cuando metamos Joystick tenemos que asignarlo
+#define JOY_PIN_UP	5
+#define JOY_PIN_DOWN	6
+#define JOY_PIN_LEFT	13
+#define JOY_PIN_RIGHT	19
+#define JOY_PIN_CENTER 27
 
 // Distribucion de pines GPIO empleada para el enlace IR
 // ATENCION: Valores a modificar por el alumno
@@ -55,7 +48,7 @@
 
 // Distribucion de pines GPIO empleada para la reproducción de efectos
 // ATENCION: Valores a modificar por el alumno
-#define PLAYER_PWM_PIN 	18
+#define PLAYER_PWM_PIN 	23
 
 // Distribucion de pines GPIO empleada para el control de los servos
 // ATENCION: Valores a modificar por el alumno
@@ -64,23 +57,23 @@
 
 // FLAGS FSM CONTROL DE JUEGO Y TORRETA
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_SYSTEM_START 		6
-#define FLAG_JOYSTICK_UP 		8
-#define FLAG_JOYSTICK_DOWN 		10
-#define FLAG_JOYSTICK_LEFT		12
-#define FLAG_JOYSTICK_RIGHT		14
-#define FLAG_TRIGGER_BUTTON		16
-#define FLAG_SHOOT_TIMEOUT		18
-#define FLAG_TARGET_DONE		20
-#define FLAG_SYSTEM_END			22
+#define FLAG_SYSTEM_START 		1
+#define FLAG_JOYSTICK_UP 		2
+#define FLAG_JOYSTICK_DOWN 		4
+#define FLAG_JOYSTICK_LEFT		8
+#define FLAG_JOYSTICK_RIGHT		16
+#define FLAG_TRIGGER_BUTTON		32
+#define FLAG_SHOOT_TIMEOUT		64
+#define FLAG_TARGET_DONE		128
+#define FLAG_SYSTEM_END			256
 
 // FLAGS FSM REPRODUCCION DE EFECTOS DE SONIDO
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_START_DISPARO		24
-#define FLAG_START_IMPACTO		26
-#define FLAG_PLAYER_STOP		28
-#define FLAG_PLAYER_END			30
-#define FLAG_NOTA_TIMEOUT		32
+#define FLAG_START_DISPARO		1
+#define FLAG_START_IMPACTO		2 //Solo un bit a 1 sino puede haber conflicto
+#define FLAG_PLAYER_STOP		4
+#define FLAG_PLAYER_END			8
+#define FLAG_NOTA_TIMEOUT		16
 
 enum interruption_sources {
 	TARGET_ISR,
