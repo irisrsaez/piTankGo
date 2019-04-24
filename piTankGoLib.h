@@ -7,23 +7,21 @@
 #include "fsm.h"
 #include "tmr.h"
 
-#define CLK_MS 5 //10
+//Reloj del sistema
+#define CLK_MS 5
 
-// ATENCION: Valores a modificar por el alumno
 // INTERVALO DE GUARDA ANTI-REBOTES
 #define	DEBOUNCE_TIME_TECLADO	200
 // DURACION DISPARO IR
 #define SHOOTING_PERIOD 0
 
 // CLAVES PARA MUTEX
-// ATENCION: Valores a modificar por el alumno
 #define	SYSTEM_FLAGS_KEY	1
-#define	PLAYER_FLAGS_KEY	2 //Mutex para PLAYER
+#define	PLAYER_FLAGS_KEY	2
 #define	STD_IO_BUFFER_KEY	4
 #define TORRETA_FLAG		8
 
 // Distribucion de pines GPIO empleada para el teclado
-// ATENCION: Valores a modificar por el alumno
 /*#define GPIO_COL_1 2
 #define GPIO_COL_2 3
 #define GPIO_COL_3 4
@@ -34,7 +32,7 @@
 #define GPIO_ROW_3 10
 #define GPIO_ROW_4 9*/
 
-//Cuando metamos Joystick tenemos que asignarlo
+// Distribucion de pines GPIO empleada para el joystick
 #define JOY_PIN_UP	5
 #define JOY_PIN_DOWN	6
 #define JOY_PIN_LEFT	13
@@ -42,21 +40,18 @@
 #define JOY_PIN_CENTER 27
 
 // Distribucion de pines GPIO empleada para el enlace IR
-// ATENCION: Valores a modificar por el alumno
-#define	IR_TX_PIN		0
+#define	IR_TX_PIN		21
 #define	IR_RX_PIN		0
+#define NEO				2
 
-// Distribucion de pines GPIO empleada para la reproducción de efectos
-// ATENCION: Valores a modificar por el alumno
+// Distribucion de pines GPIO empleada para la reproduccion de efectos
 #define PLAYER_PWM_PIN 	23
 
 // Distribucion de pines GPIO empleada para el control de los servos
-// ATENCION: Valores a modificar por el alumno
 #define	SERVO_VERTICAL_PIN		0
 #define	SERVO_HORIZONTAL_PIN	0
 
 // FLAGS FSM CONTROL DE JUEGO Y TORRETA
-// ATENCION: Valores a modificar por el alumno
 #define FLAG_SYSTEM_START 		1
 #define FLAG_JOYSTICK_UP 		2
 #define FLAG_JOYSTICK_DOWN 		4
@@ -68,9 +63,9 @@
 #define FLAG_SYSTEM_END			256
 
 // FLAGS FSM REPRODUCCION DE EFECTOS DE SONIDO
-// ATENCION: Valores a modificar por el alumno
+//Solo un bit a 1 sino puede haber conflicto
 #define FLAG_START_DISPARO		1
-#define FLAG_START_IMPACTO		2 //Solo un bit a 1 sino puede haber conflicto
+#define FLAG_START_IMPACTO		2
 #define FLAG_PLAYER_STOP		4
 #define FLAG_PLAYER_END			8
 #define FLAG_NOTA_TIMEOUT		16
@@ -81,13 +76,9 @@ enum interruption_sources {
 	TECLADO_FILA_2,
 	TECLADO_FILA_3,
 	TECLADO_FILA_4,
-	//JOYSTICK_UP_ISR,
-	//JOYSTICK_DOWN_ISR,
-	//JOYSTICK_LEFT_ISR,
-	//JOYSTICK_RIGHT_ISR,
-	//JOYSTICK_CENTER_ISR
 };
 
+//Externalizamos variables para poder usarlos en otras estructuras
 extern int flags_system;
 extern int flags_player;
 

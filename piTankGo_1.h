@@ -12,8 +12,9 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 #include <softTone.h>
+#include <wiringSerial.h>
 
-#include "kbhit.h" // Para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
+#include "kbhit.h"
 #include "player.h"
 #include "torreta.h"
 #include "tmr.h"
@@ -33,12 +34,16 @@ enum fsm_state {
 	TRIGGER_BUTTON
 }TipoEstado;
 
+//Estructura que describe un objeto TipoSistema
 typedef struct {
 	TipoTorreta torreta; // Objeto para el control de la torreta
 	TipoPlayer player; // Reproductor de efectos
 	char teclaPulsada;  // Variable que almacena la ultima tecla pulsada
 	int debug; // Variable que habilita o deshabilita la impresion de mensajes por salida estandar
 } TipoSistema;
+
+//Variable externa del serial para su uso en otras estructuras
+extern int fd;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION

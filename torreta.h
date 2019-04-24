@@ -12,11 +12,14 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <wiringSerial.h>
 
+#include "tmr.h"
 #include "fsm.h"
 #include "kbhit.h"
 #include "joystick.h"
 
+//Asignacion de pines PWM de salida
 #define	TORRETA_PIN_PWM_X	18
 #define	TORRETA_PIN_PWM_Y	24
 
@@ -26,10 +29,12 @@
 // (más lenta ante variaciones rápidas del ciclo de trabajo de la señal de control)
 #define TORRETA_PWM_RANGE		400 // 100 * 400 = 40,000 µS = 40 ms // 25 Hz
 
+//Variables constantes
 #define TORRETA_INCREMENTO	1
 #define TORRETA_MINIMO		9
 #define TORRETA_MAXIMO		22
 
+//Estructura que describe un objeto TipoServo
 typedef struct {
 	int inicio; // Valor correspondiente a la posicion inicial del servo
 	int incremento; // Cuantía en que se incrementa el valor de la posicion con cada movimiento del servo
@@ -37,20 +42,22 @@ typedef struct {
 	int maximo; // Valor maximo correspondiente a la posicion del servo
 } TipoServo;
 
+//Estructura que describe un objeto TipoPosicionTorreta
 typedef struct {
 	int x; // Coordenada x correspondiente a la posicion del servo horizontal
 	int y; // Coordenada y correspondiente a la posicion del servo vertical
 } TipoPosicionTorreta;
 
+//Estructura que describe un objeto TipoTorreta
 typedef struct {
 	TipoPosicionTorreta posicion;
 	TipoServo servo_x;
 	TipoServo servo_y;
-	// A completar por el alumno (declaracion del temporizador para control duracion disparo)
-	//tmr_t* tmr;
+	tmr_t* tmr;
+	int duracion;
 } TipoTorreta;
 
-//extern int flags_torreta;
+//Externalizamos el objeto TipoTorreta torreta para poder usarlo en otras extructuras
 extern TipoTorreta torreta;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
@@ -77,6 +84,8 @@ void DisparoIR (fsm_t* this);
 void FinalDisparoIR (fsm_t* this);
 void ImpactoDetectado (fsm_t* this);
 void FinalizaJuego (fsm_t* this);
+void timer_player_duracion_nota_actual_isr (union sigval value);
+void Empieza ();
 
 // Prototipos de procedimientos de atencion a las interrupciones
 //static void timer_duracion_disparo_isr (union sigval value);

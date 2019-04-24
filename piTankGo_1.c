@@ -3,6 +3,7 @@
 #include "player.h"
 #include "torreta.h"
 #include "joystick.h"
+#include <wiringSerial.h>
 
 int frecuenciaDespacito[160] = {0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1175,1109,988,740,740,740,740,740,740,988,988,988,988,880,988,784,0,784,784,784,784,784,988,988,988,988,1109,1175,880,0,880,880,880,880,880,1175,1175,1175,1175,1318,1318,1109,0,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,0,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318,659,659,659,659,659,659,659,659,554,587,1480,1318,1480,1318,1480,1318,1480,1318,1480,1318,1480,1568,1568,1175,0,1175,1568,1568,1568,1568,1760,1568,1480,0,1480,1480,1480,1760,1568,1480,1318};
 int tiempoDespacito[160] = {1200,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,800,300,600,600,300,300,150,150,150,150,150,150,150,150,300,150,300,343,112,150,150,150,150,150,150,150,150,300,150,300,300,150,150,150,150,150,150,150,150,150,300,150,300,450,1800,150,150,150,150,300,150,300,150,150,150,300,150,300,450,450,300,150,150,225,75,150,150,300,450,800,150,150,300,150,150,300,450,150,150,150,150,150,150,150,150,300,300,150,150,150,150,150,150,450,150,150,150,300,150,300,450,450,300,150,150,150,300,150,300,450,800,150,150,300,150,150,300,450};
@@ -19,39 +20,55 @@ int frecuenciasImpacto[32] = {97,109,79,121,80,127,123,75,119,96,71,101,98,113,9
 int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
 
 int flags_player = 0;
+int fd ;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
 //------------------------------------------------------
 
-// int ConfiguracionSistema (TipoSistema *p_sistema): procedimiento de configuracion del sistema.
-// Realizara¡, entra otras, todas las operaciones necesarias para:
-// configurar el uso de posibles librerÃ­as (e.g. Wiring Pi),
-// configurar las interrupciones externas asociadas a los pines GPIO,
-// configurar las interrupciones periÃ³dicas y sus correspondientes temporizadores,
-// crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
+/* int ConfiguracionSistema (TipoSistema *p_sistema): procedimiento de configuracion del sistema.
+ *  Realizara, entra otras, todas las operaciones necesarias para:
+ *  configurar el uso de posibles librerias (e.g. Wiring Pi),
+ *  configurar las interrupciones externas asociadas a los pines GPIO,
+ *  configurar las interrupciones periodicas y sus correspondientes temporizadores,
+ *  crear, si fuese necesario, los threads adicionales que pueda requerir el sistema
+ */
 int ConfiguraSistema (TipoSistema *p_sistema) {
+
 	int result = 0;
 
-	piLock (STD_IO_BUFFER_KEY);
+	piLock (STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
+	/*Inicializa libreria wiringPi y supone que el programa de llamada usará el esquema de numeración de pin wiringPi.
+	 * Permite que los programas de llamada utilicen los números de pin Broadcom GPIO directamente sin volver a asignar*/
 	wiringPiSetupGpio ();
-	//pinMode(pin_raspi,OUTPUT/INPUT);
+	//Establecemos el modo del pin dado como salida
 	pinMode(PLAYER_PWM_PIN, OUTPUT);
-	//Crea un tono en ese pin softToneCreate(pin_raspi)
+	//Creamos un pin de tono controlado por software
 	softToneCreate(PLAYER_PWM_PIN);
-	//Escribe en ese pin esa frecuencia softToneWrite(pin_raspi,frecuencia)
+	//Actualizamos el valor de frecuencia del tono en el pin dado a 0 para inicializarlo.
 	softToneWrite(PLAYER_PWM_PIN,0);
+	piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
 
+	//Abrimos e inicializamos el dispositivo serie y establecemos la velocidad de transmisión del mismo.
+	if ((fd = serialOpen ("/dev/ttyACM0", 9600)) < 0){
+		fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+		return 1 ;
+	}
 
-	piUnlock (STD_IO_BUFFER_KEY);
+	//Descartamos todos los datos recibidos o esperamos a que se envíe el dispositivo dado
+	void serialFlush (int fd);
+	return 1;
+
 	return result;
+
 }
 
-// int InicializaSistema (TipoSistema *p_sistema): procedimiento de inicializacion del sistema.
-// Realizara, entra otras, todas las operaciones necesarias para:
-// la inicializacion de los diferentes elementos de los que consta nuestro sistema,
-// la torreta, los efectos, etc.
-// igualmente arrancarÃ¡ el thread de exploraciÃ³n del teclado del PC
+/* Procedimiento de inicializacion del sistema.
+ * Realizara, entra otras, todas las operaciones necesarias para:
+ * la inicializacion de los diferentes elementos de los que consta nuestro sistema,
+ * la torreta, los efectos, etc.
+ * igualmente arrancara el thread de exploracion del teclado del PC
+ */
 int InicializaSistema (TipoSistema *p_sistema) {
 	int result = 0;
 
@@ -66,7 +83,8 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	InicializaEfecto(&(p_sistema->player.efecto_impacto),p_sistema->player.efecto_impacto.nombre,frecuenciasImpacto,tiemposImpacto,32);
 	//Inicializamos antes player porque sino efecto disparo no se inicializa y hay violacion de segmento
 	InicializaPlayer(&(p_sistema->player));
-	inicializa();
+	//Inicializamos el joystick
+	InicializaJoy();
 
 
 	// Lanzamos thread para exploracion del teclado convencional del PC*/
@@ -152,15 +170,18 @@ void delay_until (unsigned int next) {
 
 int main (){
 
+	//Declaramos una variable de TipoSistema compuesta por sus diversos parámetros
 	TipoSistema sistema;
 	unsigned int next;
-	// Configuracion e inicializacion del sistema
+	// Configuracion del sistema
 	ConfiguraSistema (&sistema);
+	//Inicializacion del sistema
 	InicializaSistema (&sistema);
-
+	//Inicializamos la torreta del sistema
 	InicializaTorreta(&sistema.torreta);
 
-	fsm_trans_t reproductor[] = {
+	//Declaracion de los estados y transiciones de la maquina de estados del player
+	fsm_trans_t player[] = {
 		{ WAIT_START, CompruebaStartDisparo, WAIT_NEXT, InicializaPlayDisparo },
 		{ WAIT_START, CompruebaStartImpacto, WAIT_NEXT, InicializaPlayImpacto },
 		{ WAIT_NEXT, CompruebaStartImpacto, WAIT_NEXT, InicializaPlayImpacto },
@@ -183,6 +204,7 @@ int main (){
 			{-1, NULL, -1, NULL },
 	};*/
 
+	//Declaracion de los estados y transiciones de la maquina de estados de la torreta
 	fsm_trans_t torreta[] = {
 
 			{ WAIT_START, CompruebaComienzo, WAIT_MOVE, ComienzaSistema },
@@ -198,25 +220,28 @@ int main (){
 	};
 
 
-	//Creacion de las maquinas de estados
-	fsm_t* player_fsm = fsm_new (WAIT_START, reproductor, &(sistema.player)); //Hemos añadido el timer
+	//Declaracion de las maquinas de estados con su estado de comiento, la maquina y el objeto
+	fsm_t* player_fsm = fsm_new (WAIT_START, player, &(sistema.player));
 	//fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
 	//fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
 	fsm_t* torreta_fsm = fsm_new (WAIT_START, torreta, &(sistema.torreta));
 
 	next = millis();
+
 	while (1) {
 		fsm_fire (player_fsm);
+		fsm_fire (torreta_fsm);
 		//fsm_fire (columns_fsm);
 		//fsm_fire (keypad_fsm);
-		fsm_fire (torreta_fsm);
 
 		next += CLK_MS;
 		delay_until (next);
 	}
 
-	//Destruimos el timer y la maquina de estados
+	//Destruimos el timer y las maquinas de estados
 	tmr_destroy ((tmr_t*)(player_fsm->user_data));
 	fsm_destroy (player_fsm);
+	fsm_destroy (torreta_fsm);
 	return 0;
+
 }

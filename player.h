@@ -12,13 +12,16 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 #include <softTone.h>
+#include <wiringSerial.h>
 
 #include "piTankGoLib.h"
 #include "joystick.h"
 
+//Variables constantes
 #define MAX_NUM_NOTAS 		2000
 #define MAX_NUM_CHAR_NOMBRE	100
 
+//Estructura que describe un objeto TipoEfecto
 typedef struct {
 	char nombre[MAX_NUM_CHAR_NOMBRE]; // String con el nombre del efecto
 	int frecuencias[MAX_NUM_NOTAS]; // Array con las frecuencias de las notas del efecto
@@ -26,6 +29,7 @@ typedef struct {
 	int num_notas; // Numero de notas de que consta el efecto
 } TipoEfecto;
 
+//Estructura que describe un objeto TipoPlayer
 typedef struct {
 	int posicion_nota_actual;	// Valor correspondiente a la posicion de la nota actual en los arrays de frecuencias y duraciones
 	int frecuencia_nota_actual; // Valor correspondiente a la frecuencia de la nota actual
@@ -40,6 +44,7 @@ typedef struct {
 	tmr_t* tmr;
 } TipoPlayer;
 
+//Externalizamos flags_player para poder usarlo en otras estructuras
 extern int flags_player;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
