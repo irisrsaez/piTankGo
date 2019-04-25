@@ -57,9 +57,7 @@ void joystick_down(){
 	piUnlock(TORRETA_FLAG); //Desbloqueamos el MUTEX de torreta
 
 	//Imprimimos por el Serial el mensaje
-	printf("down");
-	serialPrintf(fd,"ABAJO");
-	fflush(stdout);
+	//printf("down");
 
 }
 
@@ -74,9 +72,7 @@ void joystick_up(){
 	piUnlock(TORRETA_FLAG); //Desbloqueamos el MUTEX de torreta
 
 	//Imprimimos por el Serial el mensaje
-	printf("up");
-	serialPrintf(fd,"ARRIBA");
-	fflush(stdout);
+	//printf("up");
 
 }
 
@@ -91,9 +87,7 @@ void joystick_right(){
 	piUnlock(TORRETA_FLAG); //Desbloqueamos el MUTEX de torreta
 
 	//Imprimimos por el Serial el mensaje
-	printf("derecha");
-	serialPrintf(fd,"DERECHA");
-	fflush(stdout);
+	//printf("derecha");
 
 }
 
@@ -108,9 +102,7 @@ void joystick_left(){
 	piUnlock(TORRETA_FLAG); //Desbloqueamos el MUTEX de torreta
 
 	//Imprimimos por el Serial el mensaje
-	printf("izquierda");
-	serialPrintf(fd,"IZQUIERDA");
-	fflush(stdout);
+	//printf("izquierda");
 
 }
 
@@ -125,8 +117,8 @@ void joystick_center(){
 	piUnlock(TORRETA_FLAG); //Bloqueamos el MUTEX del player
 
 	//Imprimimos por el Serial el mensaje
-	printf("centro");
-	serialPrintf(fd,"disparo IR");
-	fflush(stdout);
+	//printf("centro");
+	//serialPrintf(fi,"disparo IR");
+	//fflush(stdout);
 
 }

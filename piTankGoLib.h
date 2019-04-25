@@ -35,14 +35,13 @@
 // Distribucion de pines GPIO empleada para el joystick
 #define JOY_PIN_UP	5
 #define JOY_PIN_DOWN	6
-#define JOY_PIN_LEFT	13
-#define JOY_PIN_RIGHT	19
+#define JOY_PIN_LEFT	19
+#define JOY_PIN_RIGHT	13
 #define JOY_PIN_CENTER 27
 
 // Distribucion de pines GPIO empleada para el enlace IR
 #define	IR_TX_PIN		21
-#define	IR_RX_PIN		0
-#define NEO				2
+#define	IR_RX_PIN		20
 
 // Distribucion de pines GPIO empleada para la reproduccion de efectos
 #define PLAYER_PWM_PIN 	23

@@ -44,6 +44,7 @@ typedef struct {
 
 //Variable externa del serial para su uso en otras estructuras
 extern int fd;
+extern int fi;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION

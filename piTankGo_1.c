@@ -21,6 +21,7 @@ int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
 
 int flags_player = 0;
 int fd ;
+int fi;
 
 //------------------------------------------------------
 // FUNCIONES DE CONFIGURACION/INICIALIZACION
@@ -50,13 +51,23 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 	piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
 
 	//Abrimos e inicializamos el dispositivo serie y establecemos la velocidad de transmisión del mismo.
-	if ((fd = serialOpen ("/dev/ttyACM0", 9600)) < 0){
-		fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
+	if ((fd = serialOpen ("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0", 115200)) < 0){
+		fprintf (stderr, "Problema conexion serial: %s\n", strerror (errno)) ;
+		return 1 ;
+	}
+
+	//Abrimos e inicializamos el dispositivo serie y establecemos la velocidad de transmisión del mismo.
+	if ((fi = serialOpen ("/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_95335343136351D05271-if00", 115200)) < 0){
+		fprintf (stderr, "Problema conexion serial: %s\n", strerror (errno)) ;
 		return 1 ;
 	}
 
 	//Descartamos todos los datos recibidos o esperamos a que se envíe el dispositivo dado
 	void serialFlush (int fd);
+	return 1;
+
+	//Descartamos todos los datos recibidos o esperamos a que se envíe el dispositivo dado
+	void serialFlush (int fi);
 	return 1;
 
 	return result;
@@ -179,6 +190,7 @@ int main (){
 	InicializaSistema (&sistema);
 	//Inicializamos la torreta del sistema
 	InicializaTorreta(&sistema.torreta);
+	serialPrintf(fi,"A JUGAR!");
 
 	//Declaracion de los estados y transiciones de la maquina de estados del player
 	fsm_trans_t player[] = {

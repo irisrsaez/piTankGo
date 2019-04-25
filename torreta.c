@@ -35,7 +35,7 @@ void InicializaTorreta (TipoTorreta *p_torreta) {
 	//Creo el timer y se lo asigno a la torreta
 	tmr_t* tmr = tmr_new(timer_torreta_isr);
 	p_torreta->tmr=tmr;
-	p_torreta->duracion=75;
+	p_torreta->duracion=10;
 
 	//Configuramos pin de salida del IR
 	pinMode(IR_TX_PIN, OUTPUT);
@@ -214,9 +214,6 @@ void ComienzaSistema (fsm_t* this) {
 	//printf("start");
 	//serialPrintf(fd, "A JUGAR!");
 
-	printf("A JUGAR!");
-	fflush(stdout);
-
 }
 
 /*
@@ -238,6 +235,9 @@ void MueveTorretaAbajo (fsm_t* this) {
 
 	//Actualizamos el valor de PWM en el pin dado.
 	softPwmWrite(TORRETA_PIN_PWM_Y, p_torreta->posicion.y);
+
+	serialPrintf(fi,"    MOVE DOWN");
+	fflush(stdout);
 
 	}
 }
@@ -262,8 +262,7 @@ void MueveTorretaArriba (fsm_t* this) {
 	//Actualizamos el valor de PWM en el pin dado.
 	softPwmWrite(TORRETA_PIN_PWM_Y, p_torreta->posicion.y);
 
-	//Imprimimos a través del serial la accion a realizar
-	serialPrintf(fd,"ARRIBA");
+	serialPrintf(fi,"    MOVE UP");
 	fflush(stdout);
 
 	}
@@ -289,8 +288,7 @@ void MueveTorretaIzquierda (fsm_t* this) {
 	//Actualizamos el valor de PWM en el pin dado.
 	softPwmWrite(TORRETA_PIN_PWM_X, p_torreta->posicion.x);
 
-	//Imprimimos a través del serial la accion a realizar
-	serialPrintf(fd,"IZQUIERDA");
+	serialPrintf(fi,"    MOVE LEFT");
 	fflush(stdout);
 
 	}
@@ -316,8 +314,7 @@ void MueveTorretaDerecha (fsm_t* this) {
 	//Actualizamos el valor de PWM en el pin dado.
 	softPwmWrite(TORRETA_PIN_PWM_X, p_torreta->posicion.x);
 
-	//Imprimimos a través del serial la accion a realizar
-	serialPrintf(fd,"DERECHA");
+	serialPrintf(fi,"   MOVE RIGTH");
 	fflush(stdout);
 
 	}
@@ -342,6 +339,7 @@ void DisparoIR (fsm_t* this) {
 	piUnlock(PLAYER_FLAGS_KEY); //Bloqueamos el MUTEX de la torreta
 
 	serialPrintf(fd,"disparo");
+	serialPrintf(fi," PIUM PIUM PIUM");
 	//Inicializamos el timer con el time del p_torreta y le ponemos la duracion del disparo
 	tmr_startms(p_torreta->tmr,p_torreta->duracion);
 
