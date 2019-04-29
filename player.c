@@ -44,10 +44,10 @@ void InicializaPlayer (TipoPlayer *p_player) {
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
 
 	//Actualizamos el valor de frecuencia del tono en el pin dado
-	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]);
+	//softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]);
 
 	//Empieza el timer
-	tmr_startms(p_player->tmr,(p_player->duracion_nota_actual));
+	//tmr_startms(p_player->tmr,(p_player->duracion_nota_actual));
 }
 
 //------------------------------------------------------

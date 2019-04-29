@@ -35,10 +35,11 @@ void InicializaTorreta (TipoTorreta *p_torreta) {
 	//Creo el timer y se lo asigno a la torreta
 	tmr_t* tmr = tmr_new(timer_torreta_isr);
 	p_torreta->tmr=tmr;
-	p_torreta->duracion=10;
+	p_torreta->duracion=1500;
 
 	//Configuramos pin de salida del IR
 	pinMode(IR_TX_PIN, OUTPUT);
+	digitalWrite(IR_TX_PIN, LOW);
 
 	//Configuramos pin de entrada del IR
 	pinMode(IR_RX_PIN, INPUT);
@@ -334,14 +335,15 @@ void DisparoIR (fsm_t* this) {
 	//Escribo en el pin un 1 si se produce el disparo
 	digitalWrite(IR_TX_PIN, HIGH);
 
+	serialPrintf(fd,"disparo");
+		serialPrintf(fi," PIUM PIUM PIUM");
+
 	piLock(PLAYER_FLAGS_KEY); //Bloqueamos el MUTEX de la torreta
+	//Inicializamos el timer con el time del p_torreta y le ponemos la duracion del disparo
+	tmr_startms(p_torreta->tmr,p_torreta->duracion);
 	flags_player |= FLAG_START_DISPARO; //Subimos el flag para que suene la musica del disparo
 	piUnlock(PLAYER_FLAGS_KEY); //Bloqueamos el MUTEX de la torreta
 
-	serialPrintf(fd,"disparo");
-	serialPrintf(fi," PIUM PIUM PIUM");
-	//Inicializamos el timer con el time del p_torreta y le ponemos la duracion del disparo
-	tmr_startms(p_torreta->tmr,p_torreta->duracion);
 
 	printf("\n[TORRETA][DisparoIR]\n");
 
@@ -372,8 +374,10 @@ void ImpactoDetectado (fsm_t* this) {
 	digitalWrite(IR_TX_PIN, LOW);
 
 	serialPrintf(fd,"impacto");
+	serialPrintf(fi," PUFFFF");
 
 	piLock(PLAYER_FLAGS_KEY); //Bloqueamos el MUTEX de la torreta
+	tmr_startms(p_torreta->tmr,p_torreta->duracion);
 	flags_player |= FLAG_START_IMPACTO; //Subimos el flag para que suene la musica del IMPACTO
 	piUnlock(PLAYER_FLAGS_KEY); //Bloqueamos el MUTEX de la torreta
 
@@ -392,6 +396,6 @@ void FinalizaJuego (fsm_t* this) {
 
 void Empieza () {
 
-flags_torreta |= FLAG_SYSTEM_START;
+flags_torreta |= FLAG_TARGET_DONE;
 
 }
