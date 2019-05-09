@@ -1,4 +1,9 @@
-
+/*
+ * piTankGoLib.h
+ *
+ *  Created on: 8 abr. 2019
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
+ */
 #ifndef _PITANKGOLIB_H_
 #define _PITANKGOLIB_H_
 
@@ -13,24 +18,13 @@
 // INTERVALO DE GUARDA ANTI-REBOTES
 #define	DEBOUNCE_TIME_TECLADO	200
 // DURACION DISPARO IR
-#define SHOOTING_PERIOD 0
+#define SHOOTING_PERIOD 1500
 
 // CLAVES PARA MUTEX
 #define	SYSTEM_FLAGS_KEY	1
 #define	PLAYER_FLAGS_KEY	2
 #define	STD_IO_BUFFER_KEY	4
 #define TORRETA_FLAG		8
-
-// Distribucion de pines GPIO empleada para el teclado
-/*#define GPIO_COL_1 2
-#define GPIO_COL_2 3
-#define GPIO_COL_3 4
-#define GPIO_COL_4 17
-
-#define GPIO_ROW_1 27
-#define GPIO_ROW_2 22
-#define GPIO_ROW_3 10
-#define GPIO_ROW_4 9*/
 
 // Distribucion de pines GPIO empleada para el joystick
 #define JOY_PIN_UP	5
@@ -39,16 +33,16 @@
 #define JOY_PIN_RIGHT	13
 #define JOY_PIN_CENTER 27
 
+// Distribucion de pines GPIO empleada para los botones
+#define BUTTON_START 16
+#define BUTTON_END 12
+
 // Distribucion de pines GPIO empleada para el enlace IR
 #define	IR_TX_PIN		21
 #define	IR_RX_PIN		20
 
 // Distribucion de pines GPIO empleada para la reproduccion de efectos
 #define PLAYER_PWM_PIN 	23
-
-// Distribucion de pines GPIO empleada para el control de los servos
-#define	SERVO_VERTICAL_PIN		0
-#define	SERVO_HORIZONTAL_PIN	0
 
 // FLAGS FSM CONTROL DE JUEGO Y TORRETA
 #define FLAG_SYSTEM_START 		1
@@ -68,18 +62,6 @@
 #define FLAG_PLAYER_STOP		4
 #define FLAG_PLAYER_END			8
 #define FLAG_NOTA_TIMEOUT		16
-
-enum interruption_sources {
-	TARGET_ISR,
-	TECLADO_FILA_1,
-	TECLADO_FILA_2,
-	TECLADO_FILA_3,
-	TECLADO_FILA_4,
-};
-
-//Externalizamos variables para poder usarlos en otras estructuras
-extern int flags_system;
-extern int flags_player;
 
 extern int frecuenciaDespacito[];
 extern int tiempoDespacito[];

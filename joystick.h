@@ -2,7 +2,7 @@
  * joystick.h
  *
  *  Created on: 8 abr. 2019
- *      Author: Javier Abejaro e Iris Rubio
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
  */
 
 #include <stdio.h>
@@ -16,10 +16,6 @@
 #ifndef JOYSTICK_H_
 #define JOYSTICK_H_
 
-//Variables externas para poder usarlas en otras estructuras
-extern int flags_torreta;
-extern int flags_player;
-
 // Prototipos de funciones de entrada
 int InicializaJoy();
 
@@ -29,5 +25,7 @@ void joystick_down();
 void joystick_left();
 void joystick_right();
 void joystick_center();
+void ComienzaJuego();
+void FinalJuego();
 
 #endif /* JOYSTICK_H_ */

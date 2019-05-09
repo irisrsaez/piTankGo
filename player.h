@@ -1,8 +1,8 @@
 /*
  * player.h
  *
- *  Created on: 21 de enero de 2019
- *      Author: FFM
+ *  Created on: 8 abr. 2019
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
  */
 
 #ifndef PLAYER_H_
@@ -40,8 +40,7 @@ typedef struct {
 	TipoEfecto efecto_disparo; // Efecto de disparo
 	TipoEfecto efecto_impacto; // Efecto de impacto
 
-	//Creo un nuevo parametro timer para el player
-	tmr_t* tmr;
+	tmr_t* tmr; //Creo un nuevo puntero timer para el player
 } TipoPlayer;
 
 //Externalizamos flags_player para poder usarlo en otras estructuras

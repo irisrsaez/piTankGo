@@ -1,8 +1,8 @@
 /*
  * piTankGo_1.h
  *
- *  Created on: 11 de enero de 2019
- *      Author: FFM
+ *  Created on: 8 abr. 2019
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
  */
 
 #ifndef _PITANKGO_1_H_
@@ -27,10 +27,6 @@ enum fsm_state {
 	WAIT_NEXT,
 	WAIT_MOVE,
 	WAIT_END,
-	JOYSTICK_UP,
-	JOYSTICK_DOWN,
-	JOYSTICK_LEFT,
-	JOYSTICK_RIGHT,
 	TRIGGER_BUTTON
 }TipoEstado;
 
@@ -51,10 +47,5 @@ extern int fi;
 //------------------------------------------------------
 int ConfiguraSistema (TipoSistema *p_sistema);
 int InicializaSistema (TipoSistema *p_sistema);
-
-//------------------------------------------------------
-// FUNCIONES LIGADAS A THREADS ADICIONALES
-//------------------------------------------------------
-PI_THREAD(thread_explora_teclado_PC);
 
 #endif /* _PITANKGO_1_H_ */

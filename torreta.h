@@ -1,8 +1,8 @@
 /*
  * torreta.h
  *
- *  Created on: 21 de enero de 2019
- *      Author: FFM
+ *  Created on: 8 abr. 2019
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
  */
 
 #ifndef _TORRETA_H_
@@ -59,6 +59,7 @@ typedef struct {
 
 //Externalizamos el objeto TipoTorreta torreta para poder usarlo en otras extructuras
 extern TipoTorreta torreta;
+extern int flags_torreta;
 
 // Prototipos de procedimientos de inicializacion de los objetos especificos
 void InicializaTorreta (TipoTorreta *p_torreta);
@@ -85,7 +86,7 @@ void FinalDisparoIR (fsm_t* this);
 void ImpactoDetectado (fsm_t* this);
 void FinalizaJuego (fsm_t* this);
 void timer_player_duracion_nota_actual_isr (union sigval value);
-void Empieza ();
+void ImpactoRX();
 
 // Prototipos de procedimientos de atencion a las interrupciones
 //static void timer_duracion_disparo_isr (union sigval value);

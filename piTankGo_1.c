@@ -1,3 +1,10 @@
+/*
+ * piTankGo_1.c
+ *
+ *  Created on: 8 abr. 2019
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
+ */
+
 #include "piTankGo_1.h"
 #include <softPwm.h>
 #include "player.h"
@@ -14,12 +21,13 @@ int tiempoTetris[55] = {450,225,225,450,225,225,450,225,225,450,225,225,450,225,
 int frecuenciaStarwars[59] = {523,0,523,0,523,0,698,0,1046,0,0,880,0,784,0,1397,0,523,0,1760,0,0,880,0,784,0,1397,0,523,0,1760,0,0,880,0,784,0,1397,0,523,0,1760,0,0,880,0,1760,0,0,784,0,523,0,0,523,0,0,523,0};
 int tiempoStarwars[59] = {134,134,134,134,134,134,536,134,536,134,134,134,134,134,134,536,134,402,134,134,429,357,134,134,134,134,536,134,402,134,134,429,357,134,134,134,134,536,134,402,134,134,429,357,134,134,134,429,357,1071,268,67,67,268,67,67,67,67,67};
 
+//Efectos seleccionados para el juego
 int frecuenciasDisparo[16] = {2500,2400,2300,2200,2100,2000,1900,1800,1700,1600,1500,1400,1300,1200,1100,1000};
 int tiemposDisparo[16] = {75,75,75,75,75,75,75,75,75,75,75,75,75,75,75,75};
 int frecuenciasImpacto[32] = {97,109,79,121,80,127,123,75,119,96,71,101,98,113,92,70,114,75,86,103,126,118,128,77,114,119,72};
 int tiemposImpacto[32] = {10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10};
 
-int flags_player = 0;
+//Variables a utilizar para la conexión serial Arduino UNO
 int fd ;
 int fi;
 
@@ -38,26 +46,22 @@ int ConfiguraSistema (TipoSistema *p_sistema) {
 
 	int result = 0;
 
-	piLock (STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
-	/*Inicializa libreria wiringPi y supone que el programa de llamada usará el esquema de numeración de pin wiringPi.
+	//piLock (STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
+	wiringPiSetupGpio (); /*Inicializa libreria wiringPi y supone que el programa de llamada usará el esquema de numeración de pin wiringPi.
 	 * Permite que los programas de llamada utilicen los números de pin Broadcom GPIO directamente sin volver a asignar*/
-	wiringPiSetupGpio ();
-	//Establecemos el modo del pin dado como salida
-	pinMode(PLAYER_PWM_PIN, OUTPUT);
-	//Creamos un pin de tono controlado por software
-	softToneCreate(PLAYER_PWM_PIN);
-	//Actualizamos el valor de frecuencia del tono en el pin dado a 0 para inicializarlo.
-	softToneWrite(PLAYER_PWM_PIN,0);
-	piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
+	pinMode(PLAYER_PWM_PIN, OUTPUT); //Establecemos el modo del pin dado como salida
+	softToneCreate(PLAYER_PWM_PIN); //Creamos un pin de tono controlado por software
+	softToneWrite(PLAYER_PWM_PIN,0); //Actualizamos el valor de frecuencia del tono en el pin dado a 0 para inicializarlo.
+	//piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
 
 	//Abrimos e inicializamos el dispositivo serie y establecemos la velocidad de transmisión del mismo.
-	if ((fd = serialOpen ("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0", 115200)) < 0){
+	if ((fd = serialOpen ("/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0", 115200)) < 0){ //Asignamos esa ruta ya que es su ruta fija, no varía
 		fprintf (stderr, "Problema conexion serial: %s\n", strerror (errno)) ;
 		return 1 ;
 	}
 
 	//Abrimos e inicializamos el dispositivo serie y establecemos la velocidad de transmisión del mismo.
-	if ((fi = serialOpen ("/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_95335343136351D05271-if00", 115200)) < 0){
+	if ((fi = serialOpen ("/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_95335343136351D05271-if00", 115200)) < 0){ //Asignamos esa ruta ya que es su ruta fija, no varía
 		fprintf (stderr, "Problema conexion serial: %s\n", strerror (errno)) ;
 		return 1 ;
 	}
@@ -86,25 +90,11 @@ int InicializaSistema (TipoSistema *p_sistema) {
 	p_sistema->debug=0;
 	p_sistema->teclaPulsada=' ';
 
-	//Inicializamos la torreta
-	InicializaTorreta(&(p_sistema->torreta));
-	//Inicializamos el efecto disparo del sistema
-	InicializaEfecto(&(p_sistema->player.efecto_disparo),p_sistema->player.efecto_disparo.nombre,frecuenciasDisparo,tiemposDisparo,16);
-	//Inicializamos efecto impacto del sistema
-	InicializaEfecto(&(p_sistema->player.efecto_impacto),p_sistema->player.efecto_impacto.nombre,frecuenciasImpacto,tiemposImpacto,32);
-	//Inicializamos antes player porque sino efecto disparo no se inicializa y hay violacion de segmento
-	InicializaPlayer(&(p_sistema->player));
-	//Inicializamos el joystick
-	InicializaJoy();
-
-
-	// Lanzamos thread para exploracion del teclado convencional del PC*/
-	/*result = piThreadCreate (thread_explora_teclado_PC);
-
-	if (result != 0) {
-		printf ("Thread didn't start!!!\n");
-		return -1;
-	}*/
+	InicializaTorreta(&(p_sistema->torreta)); //Inicializamos la torreta
+	InicializaEfecto(&(p_sistema->player.efecto_disparo),p_sistema->player.efecto_disparo.nombre,frecuenciasDisparo,tiemposDisparo,16); //Inicializamos el efecto disparo del sistema
+	InicializaEfecto(&(p_sistema->player.efecto_impacto),p_sistema->player.efecto_impacto.nombre,frecuenciasImpacto,tiemposImpacto,32); //Inicializamos efecto impacto del sistema
+	InicializaPlayer(&(p_sistema->player)); //Inicializamos antes player porque sino efecto disparo no se inicializa y hay violacion de segmento
+	InicializaJoy(); //Inicializamos el joystick
 
 	return result;
 }
@@ -112,64 +102,6 @@ int InicializaSistema (TipoSistema *p_sistema) {
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
-
-/*PI_THREAD (thread_explora_teclado_PC) {
-	int teclaPulsada;
-
-	while(1) {
-		delay(10); // Wiring Pi function: pauses program execution for at least 10 ms
-
-		piLock (STD_IO_BUFFER_KEY);
-
-		if(kbhit()) {
-			teclaPulsada = kbread();
-			//printf("\n[KHBIT][%c]\n", teclaPulsada);
-
-			switch(teclaPulsada) {
-
-				case 'd':
-
-					//Inicializamos el efecto
-					piLock (PLAYER_FLAGS_KEY);
-					flags_player |= FLAG_START_DISPARO; //(|=) Lo pone a 1
-					piUnlock (PLAYER_FLAGS_KEY);
-					printf("Tecla pulsada D");
-					fflush(stdout);
-					break;
-
-				case 'i':
-
-					//Inicializamos el efecto
-					piLock (PLAYER_FLAGS_KEY);
-					flags_player |= FLAG_START_IMPACTO; //(|=) Lo pone a 1
-					piUnlock (PLAYER_FLAGS_KEY);
-					printf("Tecla pulsada I");
-					fflush(stdout);
-					break;
-
-				case 'n':
-					//Cambiamos de nota SIN TIMER
-					piLock (PLAYER_FLAGS_KEY);
-					flags_player |= FLAG_NOTA_TIMEOUT;
-					piUnlock (PLAYER_FLAGS_KEY);
-					printf("Tecla pulsada N");
-					break;
-
-				case 'q':
-					exit(0);
-					break;
-
-				default:
-					//printf("INVALID KEY!!!\n");
-					fflush(stdout);
-					break;
-			}
-		}
-
-		piUnlock (STD_IO_BUFFER_KEY);
-	}
-}*/
-
 
 // wait until next_activation (absolute time)
 void delay_until (unsigned int next) {
@@ -181,18 +113,13 @@ void delay_until (unsigned int next) {
 
 int main (){
 
-	//Declaramos una variable de TipoSistema compuesta por sus diversos parámetros
-	TipoSistema sistema;
+	TipoSistema sistema; //Declaramos una variable de TipoSistema compuesta por sus diversos parámetros
 	unsigned int next;
-	// Configuracion del sistema
-	ConfiguraSistema (&sistema);
-	//Inicializacion del sistema
-	InicializaSistema (&sistema);
-	//Inicializamos la torreta del sistema
-	InicializaTorreta(&sistema.torreta);
-	serialPrintf(fi,"A JUGAR!");
+	ConfiguraSistema (&sistema); // Configuracion del sistema
+	InicializaSistema (&sistema); //Inicializacion del sistema
+	//InicializaTorreta(&sistema.torreta); //Inicializamos la torreta del sistema
 
-	//Declaracion de los estados y transiciones de la maquina de estados del player
+	/*Declaracion de los estados y transiciones de la maquina de estados del PLAYER*/
 	fsm_trans_t player[] = {
 		{ WAIT_START, CompruebaStartDisparo, WAIT_NEXT, InicializaPlayDisparo },
 		{ WAIT_START, CompruebaStartImpacto, WAIT_NEXT, InicializaPlayImpacto },
@@ -203,20 +130,7 @@ int main (){
 		{-1, NULL, -1, NULL },
 	};
 
-	/*fsm_trans_t columns[] = {
-			{ KEY_COL_1, CompruebaColumnTimeout, KEY_COL_2, col_2 },
-			{ KEY_COL_2, CompruebaColumnTimeout, KEY_COL_3, col_3 },
-			{ KEY_COL_3, CompruebaColumnTimeout, KEY_COL_4, col_4 },
-			{ KEY_COL_4, CompruebaColumnTimeout, KEY_COL_1, col_1 },
-			{-1, NULL, -1, NULL },
-	};
-
-	fsm_trans_t keypad[] = {
-			{ KEY_WAITING, key_pressed, KEY_WAITING, process_key},
-			{-1, NULL, -1, NULL },
-	};*/
-
-	//Declaracion de los estados y transiciones de la maquina de estados de la torreta
+	/*Declaracion de los estados y transiciones de la maquina de estados de la TORRETA*/
 	fsm_trans_t torreta[] = {
 
 			{ WAIT_START, CompruebaComienzo, WAIT_MOVE, ComienzaSistema },
@@ -231,29 +145,29 @@ int main (){
 			{-1, NULL, -1, NULL },
 	};
 
-
 	//Declaracion de las maquinas de estados con su estado de comiento, la maquina y el objeto
 	fsm_t* player_fsm = fsm_new (WAIT_START, player, &(sistema.player));
-	//fsm_t* columns_fsm = fsm_new (KEY_COL_1, columns, &teclado);
-	//fsm_t* keypad_fsm = fsm_new (KEY_WAITING, keypad, &teclado);
 	fsm_t* torreta_fsm = fsm_new (WAIT_START, torreta, &(sistema.torreta));
 
 	next = millis();
 
 	while (1) {
-		fsm_fire (player_fsm);
+		fsm_fire (player_fsm); /*Definición de la función que permite liberar la memoria utilizada por la máquina de estado */
 		fsm_fire (torreta_fsm);
-		//fsm_fire (columns_fsm);
-		//fsm_fire (keypad_fsm);
 
+		/*CLK_MS permite una frecuencia de actualizacion del estado del
+		sistema alta para que los tiempos de respuesta sean
+		bajos y no haya conflictos*/
 		next += CLK_MS;
-		delay_until (next);
+		delay_until (next); //Espero
 	}
 
 	//Destruimos el timer y las maquinas de estados
 	tmr_destroy ((tmr_t*)(player_fsm->user_data));
+	tmr_destroy ((tmr_t*)(torreta_fsm->user_data));
 	fsm_destroy (player_fsm);
 	fsm_destroy (torreta_fsm);
+
 	return 0;
 
 }

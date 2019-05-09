@@ -1,3 +1,10 @@
+/*
+ * player.c
+ *
+ *  Created on: 8 abr. 2019
+ *      Author: Javier Abejaro Capilla e Iris Rubio Saez
+ */
+
 #include "piTanKGo_1.h"
 #include "player.h"
 #include <string.h>
@@ -6,10 +13,14 @@
 #include "joystick.h"
 #include <wiringSerial.h>
 
+int flags_player = 0;
 //------------------------------------------------------
 // PROCEDIMIENTOS DE INICIALIZACION DE LOS OBJETOS ESPECIFICOS
 //------------------------------------------------------
 
+/*
+ * Método que inicializa un efecto
+ */
 int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias, int *array_duraciones, int num_notas) {
 
 	int i=0;
@@ -31,23 +42,16 @@ int InicializaEfecto (TipoEfecto *p_efecto, char *nombre, int *array_frecuencias
  */
 void InicializaPlayer (TipoPlayer *p_player) {
 
-	//Creamos e inicializamos el timer
-	tmr_t* tmr = tmr_new(timer_player_duracion_nota_actual_isr);
+	tmr_t* tmr = tmr_new(timer_player_duracion_nota_actual_isr); //Creamos e inicializamos el timer
 	p_player->tmr=tmr;
 
-	//Inicializamos p_efecto para que apunte a cualquiera de los efectos
-	p_player->p_efecto = &(p_player->efecto_disparo);
+	p_player->p_efecto = &(p_player->efecto_disparo); //Inicializamos p_efecto para que apunte a cualquiera de los efectos
 
 	//Inicializamos todos los parametros de un tipoPlayer
 	p_player->posicion_nota_actual=0;
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
 
-	//Actualizamos el valor de frecuencia del tono en el pin dado
-	//softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]);
-
-	//Empieza el timer
-	//tmr_startms(p_player->tmr,(p_player->duracion_nota_actual));
 }
 
 //------------------------------------------------------
@@ -141,21 +145,18 @@ void InicializaPlayDisparo (fsm_t* this) {
 	flags_player &= ~FLAG_START_DISPARO; //Bajamos el flag
 	piUnlock (PLAYER_FLAGS_KEY); //Desbloquemos el MUTEX del player
 
-	TipoPlayer *p_player;
+	TipoPlayer *p_player; //Creamos un puntero TipoPlayer
 
 	p_player = (TipoPlayer*)(this->user_data);
-	//Inicializo efecto disparo
-	p_player->p_efecto = &(p_player->efecto_disparo);
+	p_player->p_efecto = &(p_player->efecto_disparo); //Ponemos que el p_efecto del p_player apunte a efecto_disparo
 
-	//Actualizamos el valor de frecuencia del tono en el pin dado
-	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]);
+	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]); //Actualizamos el valor de frecuencia del tono en el pin dado
 
 	piLock (STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
 	printf("\n[PLAYER][InicializaPlayDisparo][Nota %d][Frec %d][Dura %d]\n",p_player->posicion_nota_actual,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
 	piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
 
-	//Empieza el timer y le ponemos la duracion de la nota actual
-	tmr_startms(p_player->tmr,p_player->duracion_nota_actual);
+	tmr_startms(p_player->tmr,p_player->duracion_nota_actual); //Empieza el timer y le ponemos la duracion de la nota actual
 
 }
 
@@ -168,20 +169,18 @@ void InicializaPlayImpacto (fsm_t* this) {
 	flags_player &= ~FLAG_START_IMPACTO; //Bajamos el flag
 	piUnlock (PLAYER_FLAGS_KEY); //Desbloquemos el MUTEX del player
 
-	TipoPlayer *p_player;
+	TipoPlayer *p_player; //Creamos un puntero TipoPlayer
 
 	p_player = (TipoPlayer*)(this->user_data);
-	p_player->p_efecto = &(p_player->efecto_impacto);
+	p_player->p_efecto = &(p_player->efecto_impacto); //Ponemos que el p_efecto del p_player apunte a efecto_impacto
 
-	//Actualizamos el valor de frecuencia del tono en el pin dado
-	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]);
+	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]); //Actualizamos el valor de frecuencia del tono en el pin dado
 
 	piLock (STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
 	printf("\n[PLAYER][InicializaPlayImpacto][Nota %d][Frec %d][Dura %d]\n",p_player->posicion_nota_actual,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
 	piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
 
-	//Inicializamos el timer con el time del p_player y le ponemos la duracion de la nota
-	tmr_startms(p_player->tmr,p_player->duracion_nota_actual);
+	tmr_startms(p_player->tmr,p_player->duracion_nota_actual); //Inicializamos el timer con el time del p_player y le ponemos la duracion de la nota
 }
 
 /*
@@ -189,18 +188,16 @@ void InicializaPlayImpacto (fsm_t* this) {
  */
 void ComienzaNuevaNota (fsm_t* this) {
 
-	TipoPlayer *p_player;
+	TipoPlayer *p_player; //Creamos un puntero TipoPlayer
 	p_player = (TipoPlayer*)(this->user_data);
 
-	//Actualizamos el valor de frecuencia del tono en el pin dado
-	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]);
+	softToneWrite(PLAYER_PWM_PIN,p_player->p_efecto->frecuencias[p_player->posicion_nota_actual]); //Actualizamos el valor de frecuencia del tono en el pin dado
 
 	piLock (STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
 	printf("\n[PLAYER][ComienzaNuevaNota][Nota %d][Frec %d][Dura %d]\n",p_player->posicion_nota_actual,p_player->frecuencia_nota_actual,p_player->duracion_nota_actual);
 	piUnlock (STD_IO_BUFFER_KEY); //Desbloquemos el MUTEX del buffer de impresion
 
-	//Inicializamos el timer con el time del p_player y le ponemos la duracion de la nota
-	tmr_startms(p_player->tmr,p_player->duracion_nota_actual);
+	tmr_startms(p_player->tmr,p_player->duracion_nota_actual); 	//Inicializamos el timer con el time del p_player y le ponemos la duracion de la nota
 
 }
 
@@ -209,11 +206,10 @@ void ComienzaNuevaNota (fsm_t* this) {
  */
 void ActualizaPlayer (fsm_t* this) {
 
-	TipoPlayer *p_player;
+	TipoPlayer *p_player; //Creamos un puntero TipoPlayer
 	p_player = (TipoPlayer*)(this->user_data);
 
-	//Seguimos ejecutando la cancion si se cumple la condicion
-	if(p_player->p_efecto->num_notas-1>=p_player->posicion_nota_actual){
+	if(p_player->p_efecto->num_notas-1>=p_player->posicion_nota_actual){ //Seguimos ejecutando la cancion si se cumple la condicion
 
 		p_player->posicion_nota_actual++; //Incrementamos
 		p_player->duracion_nota_actual=p_player->p_efecto->duraciones[p_player->posicion_nota_actual]; //Actualizamos la nueva duracion
@@ -242,15 +238,15 @@ void FinalEfecto (fsm_t* this) {
 	flags_player &= ~FLAG_PLAYER_END; //Bajamos el flag
 	piUnlock(PLAYER_FLAGS_KEY); //Desbloqueamos el MUTEX
 
-	TipoPlayer *p_player;
+	TipoPlayer *p_player; //Creamos un puntero TipoPlayer
 	p_player = (TipoPlayer*)(this->user_data);
 
+	//Ponemos todo a 0
 	p_player->posicion_nota_actual=0;
 	p_player->frecuencia_nota_actual=p_player->p_efecto->frecuencias[p_player->posicion_nota_actual];
 	p_player->duracion_nota_actual=p_player->p_efecto->duraciones[p_player->posicion_nota_actual];
 
-	//Actualizamos el valor de frecuencia de tono en el pin dado. Lo ponemos a 0.
-	softToneWrite(PLAYER_PWM_PIN,0);
+	softToneWrite(PLAYER_PWM_PIN,0); //Actualizamos el valor de frecuencia de tono en el pin dado. Lo ponemos a 0.
 
 	piLock(STD_IO_BUFFER_KEY); //Bloquemos el MUTEX del buffer de impresion
 	printf("\n[PLAYER][FinalEfecto]\n");
